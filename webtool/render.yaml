@@ -1,7 +1,7 @@
 # Render Blueprint: a static site (no server code runs; the conversion happens in the visitor's browser)
 services:
   - type: web
-    name: vectrex-data-tools
+    name: RetroPortLabTools
     runtime: static
     staticPublishPath: site
     headers:
