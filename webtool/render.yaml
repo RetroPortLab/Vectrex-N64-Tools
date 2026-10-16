@@ -3,7 +3,7 @@ services:
   - type: web
     name: RetroPortLabTools
     runtime: static
-    staticPublishPath: site
+    staticPublishPath: webtool/site
     headers:
       - path: /*.wasm
         name: Content-Type
