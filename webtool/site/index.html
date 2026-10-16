@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vectrex Data Tools</title>
+<meta name="description" content="Make the data files for the pw64vec and mk64vec Vectrex cartridge games from your own ROM and soundtrack, in your browser.">
+<style>
+:root { --bg:#0b0f0c; --panel:#121a14; --line:#24352a; --ink:#d7f5df; --dim:#8aa793; --acc:#5dff8f; --warn:#ffb454; --bad:#ff6b6b; }
+@media (prefers-color-scheme: light) { :root { --bg:#f3f7f4; --panel:#fff; --line:#cfe0d4; --ink:#14301f; --dim:#52705d; --acc:#0a8a3c; --warn:#a85d00; --bad:#b3261e; } }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.5 ui-sans-serif, system-ui, "Segoe UI", sans-serif; }
+main { max-width: 880px; margin: 0 auto; padding: 32px 16px 64px; }
+h1 { font-size: 1.7rem; margin: 0 0 4px; letter-spacing: .02em; }
+h1 span { color: var(--acc); }
+.lead { color: var(--dim); margin: 0 0 24px; }
+.privacy { border:1px solid var(--line); border-left:4px solid var(--acc); padding:10px 14px; border-radius:8px; background:var(--panel); margin-bottom:28px; }
+section { border:1px solid var(--line); background:var(--panel); border-radius:12px; padding:20px; margin-bottom:24px; }
+h2 { margin:0 0 6px; font-size:1.2rem; }
+h2 small { color:var(--dim); font-weight:400; }
+p { margin: 6px 0 12px; }
+.drop { display:block; border:2px dashed var(--line); border-radius:10px; padding:26px 12px; text-align:center; cursor:pointer; color:var(--dim); transition:.15s; }
+.drop:hover, .drop:focus-within, .drop.over { border-color:var(--acc); color:var(--ink); }
+.drop input { position:absolute; opacity:0; width:1px; height:1px; }
+.drop b { color:var(--ink); }
+.row { display:flex; gap:16px; flex-wrap:wrap; align-items:center; margin:10px 0; }
+label.opt { display:flex; gap:8px; align-items:center; font-size:.95rem; }
+select, button { font:inherit; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--ink); padding:8px 12px; }
+button.go { background:var(--acc); color:#04140a; border-color:var(--acc); font-weight:600; cursor:pointer; }
+button.go:disabled { opacity:.45; cursor:default; }
+button:focus-visible, select:focus-visible { outline:2px solid var(--acc); outline-offset:2px; }
+.log { margin-top:12px; background:var(--bg); border:1px solid var(--line); border-radius:8px; padding:10px 12px; font:13px/1.45 ui-monospace, Consolas, monospace; max-height:220px; overflow:auto; white-space:pre-wrap; display:none; }
+.status { margin-top:10px; min-height:1.4em; }
+.status.err { color:var(--bad); } .status.ok { color:var(--acc); }
+.file { color:var(--dim); font-size:.92rem; margin-top:8px; }
+ol { padding-left: 1.2em; } li { margin: 3px 0; }
+a { color: var(--acc); }
+footer { color:var(--dim); font-size:.9rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Vectrex <span>Data Tools</span></h1>
+  <p class="lead">Make the data files for the pw64vec and mk64vec cartridge games from your own copies of the games.</p>
+  <div class="privacy"><b>Your files stay on your computer.</b> The conversion runs inside this page; your ROM and music are never uploaded anywhere. Use your own copies, and don't share what the tools make.</div>
+
+  <section aria-labelledby="h-rom">
+    <h2 id="h-rom">1 &middot; Pilotwings 64 ROM <small>&rarr; ISL, TASKS, TEXT, SFX (and music 16&ndash;29)</small></h2>
+    <p>Drop your Pilotwings 64 (USA) ROM. Accepts .z64, .v64 and .n64.</p>
+    <label class="drop" id="drop-rom"><input type="file" id="rom" accept=".z64,.v64,.n64,.rom"><span><b>Choose the ROM</b> or drop it here</span></label>
+    <div class="file" id="rom-name"></div>
+    <div class="row">
+      <label class="opt"><input type="checkbox" id="allmusic"> Also render tracks 0&ndash;15 from the ROM (thinner than recordings; use the soundtrack tool below instead)</label>
+      <label class="opt"><input type="checkbox" id="nomusic"> Skip music (fastest)</label>
+    </div>
+    <div class="row"><button class="go" id="go-rom" disabled>Make the files</button></div>
+    <div class="status" id="st-rom" role="status"></div><div class="log" id="log-rom"></div>
+  </section>
+
+  <section aria-labelledby="h-mp3">
+    <h2 id="h-mp3">2 &middot; Soundtrack mp3s <small>&rarr; BGM00&ndash;29.WAV</small></h2>
+    <p>Pick all the soundtrack mp3s at once (names like <code>05. Hang Glider.mp3</code>). Files with unknown names are left out. Takes a minute or two.</p>
+    <label class="drop" id="drop-mp3"><input type="file" id="mp3" accept=".mp3,audio/mpeg" multiple><span><b>Choose the mp3 files</b> or drop them here</span></label>
+    <div class="file" id="mp3-name"></div>
+    <div class="row">
+      <label class="opt">Game <select id="game"><option value="pw">Pilotwings 64</option><option value="mk">Mario Kart 64</option></select></label>
+    </div>
+    <div class="row"><button class="go" id="go-mp3" disabled>Convert the music</button></div>
+    <div class="status" id="st-mp3" role="status"></div><div class="log" id="log-mp3"></div>
+  </section>
+
+  <section>
+    <h2>Then</h2>
+    <ol>
+      <li>Unzip the download. You get a folder called <code>pw64vec</code> (or <code>mk64vec</code>).</li>
+      <li>Copy its files into the same-named folder on the cartridge's SD card, next to the game's .um2 file.</li>
+      <li>Made both zips? Merge them into one <code>pw64vec</code> folder.</li>
+    </ol>
+  </section>
+  <footer>Built from the same code as the Windows tools (pw64tool and bgmtool). Mario Kart 64's course and effect data still come from the kit's own build, not this page.</footer>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+let worker, romFile = null, mp3Files = [];
+
+function startWorker(which, st, lg, btn, after) {
+  if (!worker) worker = new Worker('worker.js');
+  const status = $(st), log = $(lg);
+  log.style.display = 'block'; log.textContent = ''; status.className = 'status'; status.textContent = 'Working... this tab must stay open.'; btn.disabled = true;
+  worker.onmessage = (e) => {
+    const m = e.data;
+    if (m.type === 'log') { log.textContent += m.text + '\n'; log.scrollTop = log.scrollHeight; }
+    else if (m.type === 'error') { status.className = 'status err'; status.textContent = m.text; btn.disabled = false; }
+    else if (m.type === 'done') {
+      const url = URL.createObjectURL(new Blob([m.zip], { type: 'application/zip' }));
+      const a = document.createElement('a'); a.href = url; a.download = m.name; a.textContent = 'Download ' + m.name;
+      status.className = 'status ok'; status.textContent = m.count + ' files made. '; status.appendChild(a); a.click(); btn.disabled = false;
+    }
+  };
+  worker.onerror = (e) => { status.className = 'status err'; status.textContent = 'The converter stopped: ' + (e.message || 'unknown error'); btn.disabled = false; };
+  after();
+}
+
+function wireDrop(dropId, onFiles) {
+  const d = $(dropId);
+  ['dragenter', 'dragover'].forEach(t => d.addEventListener(t, e => { e.preventDefault(); d.classList.add('over'); }));
+  ['dragleave', 'drop'].forEach(t => d.addEventListener(t, e => { e.preventDefault(); d.classList.remove('over'); }));
+  d.addEventListener('drop', e => onFiles([...e.dataTransfer.files]));
+}
+function setRom(fs) { romFile = fs[0] || null; $('rom-name').textContent = romFile ? romFile.name + ' (' + (romFile.size / 1048576).toFixed(1) + ' MB)' : ''; $('go-rom').disabled = !romFile; }
+function setMp3(fs) { mp3Files = fs.filter(f => /\.mp3$/i.test(f.name)); $('mp3-name').textContent = mp3Files.length ? mp3Files.length + ' mp3 files chosen' : (fs.length ? 'No mp3 files in that choice' : ''); $('go-mp3').disabled = !mp3Files.length; }
+$('rom').addEventListener('change', e => setRom([...e.target.files])); wireDrop('drop-rom', setRom);
+$('mp3').addEventListener('change', e => setMp3([...e.target.files])); wireDrop('drop-mp3', setMp3);
+$('nomusic').addEventListener('change', e => { if (e.target.checked) $('allmusic').checked = false; });
+
+$('go-rom').addEventListener('click', async () => {
+  const btn = $('go-rom'), bytes = await romFile.arrayBuffer();
+  startWorker('rom', 'st-rom', 'log-rom', btn, () => worker.postMessage({ kind: 'rom', bytes, allMusic: $('allmusic').checked, noMusic: $('nomusic').checked }, [bytes]));
+});
+$('go-mp3').addEventListener('click', async () => {
+  const btn = $('go-mp3'), files = [];
+  for (const f of mp3Files) files.push({ name: f.name, buf: await f.arrayBuffer() });
+  startWorker('mp3', 'st-mp3', 'log-mp3', btn, () => worker.postMessage({ kind: 'mp3', game: $('game').value, files }, files.map(f => f.buf)));
+});
+</script>
+</body>
+</html>

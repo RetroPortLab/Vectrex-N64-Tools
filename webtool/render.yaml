@@ -1,0 +1,13 @@
+# Render Blueprint: a static site (no server code runs; the conversion happens in the visitor's browser)
+services:
+  - type: web
+    name: vectrex-data-tools
+    runtime: static
+    staticPublishPath: site
+    headers:
+      - path: /*.wasm
+        name: Content-Type
+        value: application/wasm
+      - path: /*
+        name: Cache-Control
+        value: public, max-age=300
