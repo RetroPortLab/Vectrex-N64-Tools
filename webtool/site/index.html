@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Vectrex Data Tools</title>
+<title>Vectrex N64 Conversion Tools - Retro Port Lab 2026</title>
 <meta name="description" content="Make the data files for the pw64vec and mk64vec Vectrex cartridge games from your own ROM and soundtrack, in your browser.">
 <style>
 :root { --bg:#0b0f0c; --panel:#121a14; --line:#24352a; --ink:#d7f5df; --dim:#8aa793; --acc:#5dff8f; --warn:#ffb454; --bad:#ff6b6b; }
@@ -40,8 +40,8 @@ footer { color:var(--dim); font-size:.9rem; }
 </head>
 <body>
 <main>
-  <h1>Vectrex <span>Data Tools</span></h1>
-  <p class="lead">Make the data files for the pw64vec and mk64vec cartridge games from your own copies of the games.</p>
+  <h1>Vectrex <span>N64 Conversion Tools</span></h1>
+  <p class="lead">Make the data files needed for the pw64vec and mk64vec from your own copies of the games.</p>
   <div class="privacy"><b>Your files stay on your computer.</b> The conversion runs inside this page; your ROM and music are never uploaded anywhere. Use your own copies, and don't share what the tools make.</div>
 
   <section aria-labelledby="h-rom">
@@ -50,8 +50,6 @@ footer { color:var(--dim); font-size:.9rem; }
     <label class="drop" id="drop-rom"><input type="file" id="rom" accept=".z64,.v64,.n64,.rom"><span><b>Choose the ROM</b> or drop it here</span></label>
     <div class="file" id="rom-name"></div>
     <div class="row">
-      <label class="opt"><input type="checkbox" id="allmusic"> Also render tracks 0&ndash;15 from the ROM (thinner than recordings; use the soundtrack tool below instead)</label>
-      <label class="opt"><input type="checkbox" id="nomusic"> Skip music (fastest)</label>
     </div>
     <div class="row"><button class="go" id="go-rom" disabled>Make the files</button></div>
     <div class="status" id="st-rom" role="status"></div><div class="log" id="log-rom"></div>
@@ -77,7 +75,7 @@ footer { color:var(--dim); font-size:.9rem; }
       <li>Made both zips? Merge them into one <code>pw64vec</code> folder.</li>
     </ol>
   </section>
-  <footer>Built from the same code as the Windows tools (pw64tool and bgmtool). Mario Kart 64's course and effect data still come from the kit's own build, not this page.</footer>
+  <footer>Retro Port Labs 2026</footer>
 </main>
 <script>
 const $ = id => document.getElementById(id);
